@@ -1,0 +1,69 @@
+---
+- hosts: localhost
+  gather_facts: true
+  gather_subset: "!all"
+  pre_tasks:
+      - debug:
+            msg: first pre task
+      - debug:
+            msg: pre task 1
+        changed_when: true
+        notify: pre handler 1
+      - debug:
+            msg: pre task 2
+        changed_when: true
+        notify: pre handler 2
+      - import_role:
+            name: role1
+      - import_role:
+            name: role2
+      - debug:
+            msg: last pre task
+  roles:
+      - role1
+      - role2
+      - role1
+  tasks:
+      - debug:
+            msg: first main task
+      - debug:
+            msg: task 1
+        changed_when: true
+        notify: handler 1
+      - debug:
+            msg: task 2
+        changed_when: true
+        notify: handler 2
+      - import_role:
+            name: role1
+      - include_role:
+            name: role2
+      - debug:
+            msg: last main task
+  post_tasks:
+      - debug:
+            msg: first post task
+      - debug:
+            msg: post task 1
+        changed_when: true
+        notify: post handler 1
+      - include_role:
+            name: role2
+      - debug:
+            msg: last post task
+  handlers:
+      - name: pre handler 1
+        debug:
+            msg: pre handler 1
+      - name: pre handler 2
+        debug:
+            msg: pre handler 2
+      - name: handler 1
+        debug:
+            msg: handler 1
+      - name: handler 2
+        debug:
+            msg: handler 2
+      - name: post handler 1
+        debug:
+            msg: post handler 1

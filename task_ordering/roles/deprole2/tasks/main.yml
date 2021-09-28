@@ -1,0 +1,5 @@
+---
+- debug:
+      msg: dep 2
+  changed_when: true
+  notify: dep handler 2

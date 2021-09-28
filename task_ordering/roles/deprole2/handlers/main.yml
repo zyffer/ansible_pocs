@@ -1,0 +1,4 @@
+---
+- name: dep handler 2
+  debug:
+      msg: dep handler 2
