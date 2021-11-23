@@ -1,0 +1,5 @@
+---
+- name: imported task
+  debug:
+      msg: this is the imported "static" task
+  changed_when: test_static_changed

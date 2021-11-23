@@ -1,0 +1,35 @@
+---
+- name: illustrate differences in static/dynamic task sourcing
+  hosts: localhost
+  gather_facts: false
+  vars:
+      test_changed: true
+      test_static_changed: '{{ test_changed }}'
+      test_dynamic_changed: '{{ test_changed }}'
+  tasks:
+      - name: static "import" source
+        import_tasks: imported.yml
+        tags:
+            - imported
+            - sourced
+            - static
+        notify: static handler
+      - name: dynamic "include" source
+        include_tasks:
+            file: included.yml
+            apply:
+                tags:
+                    - included
+                    - sourced
+                    - dynamic
+#               notify: dynamic handler
+        tags:
+            - dynamic
+            - include
+  handlers:
+      - name: static handler
+        debug:
+            msg: this is the import/static handler
+      - name: dynamic handler
+        debug:
+            msg: this is the include/dynamic handler
