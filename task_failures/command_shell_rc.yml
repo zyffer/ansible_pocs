@@ -1,0 +1,28 @@
+---
+- name: Test handling of return codes in command/shell tasks
+  hosts: localhost
+  tasks:
+      - block:
+            - name: a command task that will fail
+              command: "sh -c 'exit 1'"
+              register: first_com_fail
+        rescue:
+            - name: now record it without failing
+              command: "sh -c 'exit 2'"
+              failed_when: false
+              register: second_com_fail
+              notify: retry handler
+      - name: check return codes
+        debug:
+            var: "{{ item }}"
+        loop:
+            - first_com_fail.rc
+            - second_com_fail.rc
+            - first_com_fail
+            - second_com_fail
+  handlers:
+      - name: retry handler
+        command: "sh -c 'if [ -e junktest ] ; then rm junktest ; else touch junktest ; exit 1 ; fi ;'"
+        register: flaky
+        until: flaky.rc == 0
+        retries: 3
