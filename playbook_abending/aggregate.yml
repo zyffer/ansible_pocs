@@ -1,0 +1,4 @@
+---
+- import_playbook: first_good.yml
+- import_playbook: second_bad.yml
+- import_playbook: third_good.yml

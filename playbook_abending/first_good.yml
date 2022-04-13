@@ -1,0 +1,7 @@
+---
+- name: a playbook that executes fine
+  hosts: good_hosts
+  tasks:
+      - name: a fine task
+        debug:
+            msg: minding my own business

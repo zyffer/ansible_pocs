@@ -1,0 +1,20 @@
+---
+- name: a failing play
+  hosts: bad_hosts
+  ignore_errors: true
+  tasks:
+      - name: a failing task
+        assert:
+            that: false
+
+- name: good play, bad playbook, post failed play
+  hosts: good_hosts
+  tasks:
+      - name: good task in good play
+        assert:
+            that: true
+
+- name: everybody now
+  hosts: all
+  tasks:
+      - ping:

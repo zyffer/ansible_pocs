@@ -1,0 +1,8 @@
+---
+- name: good playbook, post failed playbook
+  hosts: good_hosts
+  tasks:
+      - name: good task
+        assert:
+            that: true
+

@@ -1,0 +1,11 @@
+---
+good_hosts:
+    hosts:
+        foo: {}
+        bar: {}
+bad_hosts:
+    hosts:
+        baz: {}
+all:
+    vars:
+        ansible_connection: local
