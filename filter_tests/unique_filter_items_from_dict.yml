@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+      listofkvpairs:
+          - key: foo
+            value: bar
+          - key: baz
+            value: bat
+          - key: fizz
+            value: buzz
+          - key: alice
+            value: bob
+          - key: baz
+            value: bat
+          - key: foo
+            value: bar
+  tasks:
+      - set_fact:
+            kvpairsasdict: "{{ listofkvpairs | items2dict }}"
+      - set_fact:
+            dictbacktokvpairs: "{{ kvpairsasdict | dict2items }}"
+            kvpairsuniqued: "{{ listofkvpairs | unique }}"
+      - debug:
+            var: "{{ item }}"
+        loop:
+            - listofkvpairs
+            - kvpairsasdict
+            - dictbacktokvpairs
+            - kvpairsuniqued

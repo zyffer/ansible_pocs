@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+      sysctl_config:
+          - name: net.ipv4.ip_forward
+            value: 0
+          - name: net.ipv4.tcp_adv_win_scale
+            value: 2
+          - name: kernel.panic
+            value: 20
+          - name: kernel.softlockup_panic
+            value: 1
+      grap_strat: "{{ sysctl_config | selectattr('name','eq','net.ipv4.ip_forward') | list }}"
+      should_forward: "{{ sysctl_config | default([]) |
+                          selectattr('name','eq','net.ipv4.ip_forward') |
+                          map(attribute='value') | first | int > 0 }}"
+
+  tasks:
+      - debug:
+            var: "{{ item }}"
+        loop:
+            - grap_strat
+            - should_forward
+      - command: echo "{{ item.name }}"
+        loop: "{{ grap_strat }}"
