@@ -1,0 +1,35 @@
+---
+- name: continually execute parallel tasks "delegated" to the same host, testing for collisions
+  hosts: cluster
+  gather_facts: false
+  serial: 50
+  strategy: host_pinned
+  vars:
+      test_file_path: ./test_file.yml
+      fake_port: 12abc3
+  tasks:
+      - name: make random delims
+        shell: |
+            for line in {1..4} ; do
+              echo "$RANDOM"
+            done
+        run_once: true
+        register: rand_delims
+      - name: make random token
+        shell: echo "$RANDOM"
+        register: rand_tok
+      - name: make token a line in file with matching delimeter
+        throttle: 1
+        delegate_to: common-admin-1.ris.wustl.edu
+        blockinfile:
+            marker_begin: BEGIN {{ rand_delims.stdout_lines[0] }}/{{ rand_delims.stdout_lines[1] }}/{{ rand_delims.stdout_lines[2] }}/{{ rand_delims.stdout_lines[3] }}
+            marker_end: END {{ rand_delims.stdout_lines[0] }}/{{ rand_delims.stdout_lines[1] }}/{{ rand_delims.stdout_lines[2] }}/{{ rand_delims.stdout_lines[3] }}
+            path: '{{ test_file_path }}'
+            create: true
+            block: |
+                - targets:
+                  {% for h in groups.cluster -%}
+                  - '{{ h }}:{{ fake_port }}'
+                  {% endfor -%}
+                  labels:
+                      rand_tok: '{{ rand_tok.stdout_lines }}'
