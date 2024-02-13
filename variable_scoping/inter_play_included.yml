@@ -1,0 +1,53 @@
+# Are variables included by task in one play available to subsequent plays?
+- name: Include vars play
+  hosts: inter_play_included
+  tasks:
+      - name: include vars from file
+        include_vars:
+            file: inter_play_included.yml
+
+- name: Reuse vars play
+  hosts: inter_play_included
+  tasks:
+      - name: vars included by task in previous play
+        debug:
+            var: "{{ item }}"
+        with_varnames: inter_play_*
+      - name: collision var
+        debug:
+            var: collision_var
+      - name: meta task?
+        meta: end_host
+        when: inventory_hostname is eq('localhost')
+      - name: collision var
+        debug:
+            var: collision_var
+      # Doesn't seem to work with 'local' connection plugin
+      - name: host come back?
+        meta: refresh_inventory
+      - name: collision var
+        debug:
+            var: collision_var
+
+- name: final
+  hosts: inter_play_included
+  tasks:
+      - name: collision var
+        debug:
+            var: collision_var
+
+# $ ansible-doc -s include_vars
+# - name: Load variables from files, dynamically within a task
+#   include_vars:
+#       depth:                 # When using `dir', this module will, by default, recursively go through each sub directory and load up the variables. By explicitly setting the depth, this module will only go as deep as the depth.
+#       dir:                   # The directory name from which the variables should be loaded. If the path is relative and the task is inside a role, it will look inside the role's vars/ subdirectory. If the path is relative and not inside
+#                                a role, it will be parsed relative to the playbook.
+#       extensions:            # List of file extensions to read when using `dir'.
+#       file:                  # The file name from which variables should be loaded. If the path is relative, it will look for the file in vars/ subdirectory of a role or relative to playbook.
+#       files_matching:        # Limit the files that are loaded within any directory to this regular expression.
+#       free-form:             # This module allows you to specify the 'file' option directly without any other options. There is no 'free-form' option, this is just an indicator, see example below.
+#       ignore_files:          # List of file names to ignore.
+#       ignore_unknown_extensions:   # Ignore unknown file extensions within the directory. This allows users to specify a directory containing vars files that are intermingled with non-vars files extension types (e.g. a directory with a RE
+#                                in it and vars files).
+#       name:                  # The name of a variable into which assign the included vars. If omitted (null) they will be made top level vars.
+

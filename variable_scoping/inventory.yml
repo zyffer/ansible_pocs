@@ -1,0 +1,8 @@
+---
+inter_play_included:
+    vars:
+        collision_var: inter_play_included inventory file group var
+    hosts:
+        localhost:
+            collision_var: inter_play_included inventory file host var
+        fakehost: {}

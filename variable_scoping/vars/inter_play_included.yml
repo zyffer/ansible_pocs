@@ -1,0 +1,10 @@
+---
+inter_play_string: foobar
+inter_play_list:
+    - baz
+    - bop
+    - bat
+inter_play_dict:
+    fizz: buzz
+    buzz: zap
+collision_var: inter_play_included.yml file
