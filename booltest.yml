@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+      a_false_var: false
+      a_true_var: true
+      false_if_not_true: "{{ not a_true_var }}"
+      true_if_not_false: "{{ not a_false_var }}"
+      false_if_true_not: "{{ a_true_var is eq false }}"
+      true_if_false_not: "{{ a_false_var is eq false }}"
+  tasks:
+      - debug:
+            var: "{{ item }}"
+        loop:
+            - a_false_var
+            - a_true_var
+            - false_if_not_true
+            - true_if_not_false
+            - false_if_true_not
+            - true_if_false_not
